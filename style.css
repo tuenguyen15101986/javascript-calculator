@@ -1,0 +1,51 @@
+#root {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-family: sans-serif;
+}
+
+#app {
+  width: auto;
+  border: 2px solid black;
+  border-radius: 2px;
+  padding: 1rem;
+}
+
+#app-title {
+  text-align: center;
+  margin: 1rem;
+}
+
+#display {
+  border: 1px solid black;
+  background-color: lightgray;
+  margin: 0.5rem 0 0.5rem 0;
+  text-align: right;
+}
+
+#formula {
+  font-size: x-small;
+  margin: 0.25rem;
+}
+
+#result {
+  font-size: x-large;
+  margin: 0.25rem;
+}
+
+button {
+  width: 3rem;
+  height: 3rem;
+  margin: 0.25rem;
+}
+
+#clear {
+  width: 10rem;
+}
+
+#equals {
+  width: 6.5rem;
+  background-color: green;
+}
