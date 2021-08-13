@@ -28,6 +28,7 @@
 #formula {
   font-size: x-small;
   margin: 0.25rem;
+  min-height: 1rem;
 }
 
 #result {
