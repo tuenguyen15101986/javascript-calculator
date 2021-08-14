@@ -55,10 +55,10 @@ function Keyboard(props) {
         <button id="zero" value="0" onClick={props.handleZero}>
           0
         </button>
-        <button id="decimal" value=".">
+        <button id="decimal" value="." onClick={props.handleDecimal}>
           .
         </button>
-        <button id="equals" value="=">
+        <button id="equals" value="=" onClick={props.handleEqual}>
           =
         </button>
       </div>
@@ -76,7 +76,9 @@ class App extends React.Component {
     this.clearDisplay = this.clearDisplay.bind(this);
     this.handleZero = this.handleZero.bind(this);
     this.handleNumber = this.handleNumber.bind(this);
+    this.handleDecimal = this.handleDecimal.bind(this);
     this.handleOperator = this.handleOperator.bind(this);
+    this.handleEqual = this.handleEqual.bind(this);
   }
   clearDisplay = () => {
     this.setState((state) => {
@@ -85,38 +87,71 @@ class App extends React.Component {
   };
   handleZero = (event) => {
     const eventValue = event.target.value;
-    const currentFormula = this.state.formula;
-    if (/^[^0]/.test(currentFormula)) {
+    if (/^[^0]/.test(this.state.formula)) {
       this.setState((state) => {
-        return { formula: (this.state.formula += eventValue) };
+        return {
+          formula: (this.state.formula += eventValue),
+          output: this.state.formula,
+        };
       });
     }
   };
   handleNumber = (event) => {
     const eventValue = event.target.value;
     this.setState((state) => {
-      return { formula: (this.state.formula += eventValue) };
+      return {
+        formula: (this.state.formula += eventValue),
+        output: this.state.formula,
+      };
     });
+  };
+  handleDecimal = (event) => {
+    if (/[^.]$/.test(this.state.formula)) {
+      this.setState((state) => {
+        return {
+          formula: (this.state.formula += event.target.value),
+          output: this.state.formula,
+        };
+      });
+    }
   };
   handleOperator = (event) => {
     const eventValue = event.target.value;
+    if (this.state.formula !== "") {
+      if (/[0-9]$/.test(this.state.formula)) {
+        this.setState((state) => {
+          return {
+            formula: (this.state.formula += eventValue),
+            output: this.state.formula,
+          };
+        });
+      }
+    }
+  };
+  handleEqual = (event) => {
     this.setState((state) => {
-      return { formula: (this.state.formula += eventValue) };
+      return {
+        formula: this.state.formula + "=" + eval(this.state.formula),
+        output: eval(this.state.formula),
+        formula: eval(this.state.formula),
+      };
     });
   };
   render() {
     return (
       <div id="app">
         <div id="app-title">My calculator</div>
-        <div id="display">
+        <div id="display-screen">
           <div id="formula">{this.state.formula}</div>
-          <div id="result">{this.state.output}</div>
+          <div id="display">{this.state.output}</div>
         </div>
         <Keyboard
           clearDisplay={this.clearDisplay}
           handleZero={this.handleZero}
           handleNumber={this.handleNumber}
+          handleDecimal={this.handleDecimal}
           handleOperator={this.handleOperator}
+          handleEqual={this.handleEqual}
         />
       </div>
     );
