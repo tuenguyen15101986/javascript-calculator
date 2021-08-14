@@ -86,27 +86,7 @@ class App extends React.Component {
     });
   };
   handleZero = (event) => {
-    const eventValue = event.target.value;
     if (/^[^0]/.test(this.state.formula)) {
-      this.setState((state) => {
-        return {
-          formula: (this.state.formula += eventValue),
-          output: this.state.formula,
-        };
-      });
-    }
-  };
-  handleNumber = (event) => {
-    const eventValue = event.target.value;
-    this.setState((state) => {
-      return {
-        formula: (this.state.formula += eventValue),
-        output: this.state.formula,
-      };
-    });
-  };
-  handleDecimal = (event) => {
-    if (/[^.]$/.test(this.state.formula)) {
       this.setState((state) => {
         return {
           formula: (this.state.formula += event.target.value),
@@ -115,18 +95,46 @@ class App extends React.Component {
       });
     }
   };
-  handleOperator = (event) => {
-    const eventValue = event.target.value;
-    if (this.state.formula !== "") {
-      if (/[0-9]$/.test(this.state.formula)) {
+  handleNumber = (event) => {
+    this.setState((state) => {
+      return {
+        formula: (this.state.formula += event.target.value),
+        output: this.state.formula,
+      };
+    });
+  };
+  handleDecimal = (event) => {
+    /* If the current formula already contains math operator, find the last number
+    in the formula and checks if it already contains a decimal. If not, allow to add
+    decimal to the number */
+    if (/[-+*/]/.test(this.state.formula)) {
+      const currentNumber = this.state.formula.match(/(?<=[-+*/]).+/)[0];
+      if (!currentNumber.includes(".")) {
         this.setState((state) => {
           return {
-            formula: (this.state.formula += eventValue),
+            formula: (this.state.formula += event.target.value),
+            output: this.state.formula,
+          };
+        });
+      }
+    } else {
+      if (!this.state.formula.includes(".")) {
+        this.setState((state) => {
+          return {
+            formula: (this.state.formula += event.target.value),
             output: this.state.formula,
           };
         });
       }
     }
+  };
+  handleOperator = (event) => {
+    this.setState((state) => {
+      return {
+        formula: (this.state.formula += event.target.value),
+        output: this.state.formula,
+      };
+    });
   };
   handleEqual = (event) => {
     this.setState((state) => {
