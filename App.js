@@ -81,68 +81,65 @@ class App extends React.Component {
     this.handleEqual = this.handleEqual.bind(this);
   }
   clearDisplay = () => {
-    this.setState((state) => {
-      return { formula: "", output: 0 };
+    this.setState({
+      formula: "",
+      output: 0,
     });
   };
   handleZero = (event) => {
     if (/^[^0]/.test(this.state.formula)) {
-      this.setState((state) => {
-        return {
-          formula: (this.state.formula += event.target.value),
-          output: this.state.formula,
-        };
+      this.setState({
+        formula: (this.state.formula += event.target.value),
+        output: this.state.formula,
       });
     }
   };
   handleNumber = (event) => {
-    this.setState((state) => {
-      return {
+    if (this.state.formula.includes("=")) {
+      this.setState({
+        formula: event.target.value,
+        output: event.target.value,
+      });
+    } else {
+      this.setState({
         formula: (this.state.formula += event.target.value),
         output: this.state.formula,
-      };
-    });
+      });
+    }
   };
   handleDecimal = (event) => {
     /* If the current formula already contains math operator, find the last number
     in the formula and checks if it already contains a decimal. If not, allow to add
     decimal to the number */
-    if (/[-+*/]/.test(this.state.formula)) {
+    if (this.state.formula.includes("=")) {
+      this.setState({
+        formula: event.target.value,
+        output: event.target.value
+      });
+    } else if (/[-+*/]/.test(this.state.formula)) {
       const currentNumber = this.state.formula.match(/(?<=[-+*/]).+/)[0];
       if (!currentNumber.includes(".")) {
-        this.setState((state) => {
-          return {
-            formula: (this.state.formula += event.target.value),
-            output: this.state.formula,
-          };
+        this.setState({
+          formula: (this.state.formula += event.target.value),
+          output: this.state.formula,
         });
       }
-    } else {
-      if (!this.state.formula.includes(".")) {
-        this.setState((state) => {
-          return {
-            formula: (this.state.formula += event.target.value),
-            output: this.state.formula,
-          };
-        });
-      }
+    } else if (!this.state.formula.includes(".")) {
+      this.setState({
+        formula: (this.state.formula += event.target.value),
+        output: this.state.formula,
+      });
     }
   };
   handleOperator = (event) => {
-    this.setState((state) => {
-      return {
-        formula: (this.state.formula += event.target.value),
-        output: this.state.formula,
-      };
+    this.setState({
+      formula: (this.state.output += event.target.value),
     });
   };
   handleEqual = (event) => {
-    this.setState((state) => {
-      return {
-        formula: this.state.formula + "=" + eval(this.state.formula),
-        output: eval(this.state.formula),
-        formula: eval(this.state.formula),
-      };
+    this.setState({
+      formula: this.state.formula + "=" + eval(this.state.formula),
+      output: eval(this.state.formula),
     });
   };
   render() {
