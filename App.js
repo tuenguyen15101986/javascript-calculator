@@ -108,13 +108,10 @@ class App extends React.Component {
     }
   };
   handleDecimal = (event) => {
-    /* If the current formula already contains math operator, find the last number
-    in the formula and checks if it already contains a decimal. If not, allow to add
-    decimal to the number */
     if (this.state.formula.includes("=")) {
       this.setState({
         formula: event.target.value,
-        output: event.target.value
+        output: event.target.value,
       });
     } else if (/[-+*/]/.test(this.state.formula)) {
       const currentNumber = this.state.formula.match(/(?<=[-+*/]).+/)[0];
@@ -132,9 +129,32 @@ class App extends React.Component {
     }
   };
   handleOperator = (event) => {
-    this.setState({
-      formula: (this.state.output += event.target.value),
-    });
+    if (event.target.value !== "-") {
+      if (/[-+*/]$/.test(this.state.formula)) {
+        this.setState({
+          formula:
+            this.state.formula.match(/\d(?=[-+*/])/)[0] + event.target.value,
+        });
+      } else {
+        this.setState({
+          formula: (this.state.output += event.target.value),
+        });
+      }
+    } else {
+      if (/[+*/]$/.test(this.state.formula)) {
+        this.setState({
+          formula: this.state.formula + event.target.value,
+        });
+      } else if (/-$/.test(this.state.formula)) {
+        this.setState({
+          formula: this.state.formula.slice(0, -1) + event.target.value,
+        });
+      } else {
+        this.setState({
+          formula: this.state.formula + event.target.value,
+        });
+      }
+    }
   };
   handleEqual = (event) => {
     this.setState({
