@@ -70,6 +70,7 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      calculated: false,
       formula: "",
       output: 0,
     };
@@ -84,82 +85,115 @@ class App extends React.Component {
     this.setState({
       formula: "",
       output: 0,
+      calculated: false,
     });
   };
   handleZero = (event) => {
-    if (/^[^0]/.test(this.state.formula)) {
+    if (
+      /[-+*/]/.test(this.state.formula) &&
+      this.state.formula.match(/(?<=[-+*/])\d+/)[0] !== 0
+    ) {
       this.setState({
         formula: (this.state.formula += event.target.value),
         output: this.state.formula,
+        calculated: false,
       });
+    } else {
+      if (/^[^0]/.test(this.state.formula)) {
+        this.setState({
+          formula: (this.state.formula += event.target.value),
+          output: this.state.formula,
+          calculated: false,
+        });
+      }
     }
   };
   handleNumber = (event) => {
-    if (this.state.formula.includes("=")) {
+    if (this.state.calculated) {
       this.setState({
         formula: event.target.value,
         output: event.target.value,
+        calculated: false,
       });
     } else {
       this.setState({
         formula: (this.state.formula += event.target.value),
         output: this.state.formula,
+        calculated: false,
       });
     }
   };
   handleDecimal = (event) => {
-    if (this.state.formula.includes("=")) {
+    if (this.state.calculated) {
       this.setState({
         formula: event.target.value,
         output: event.target.value,
+        calculated: false,
       });
-    } else if (/[-+*/]/.test(this.state.formula)) {
-      const currentNumber = this.state.formula.match(/(?<=[-+*/]).+/)[0];
-      if (!currentNumber.includes(".")) {
-        this.setState({
-          formula: (this.state.formula += event.target.value),
-          output: this.state.formula,
-        });
+    } else {
+      if (/[-+*/]/.test(this.state.formula)) {
+        if (/[-+*/]$/.test(this.state.formula)) {
+          this.setState({
+            formula: (this.state.formula += event.target.value),
+            output: this.state.formula,
+            calculated: false,
+          });
+        } else {
+          const currentNumber = this.state.formula.match(/(?<=[-+*/]).+/)[0];
+          if (!currentNumber.includes(".")) {
+            this.setState({
+              formula: (this.state.formula += event.target.value),
+              output: this.state.formula,
+              calculated: false,
+            });
+          } else {
+            this.setState({
+              formula: (this.state.formula += event.target.value),
+              output: this.state.formula,
+              calculated: false,
+            });
+          }
+        }
+      } else {
+        if (!this.state.formula.includes(".")) {
+          this.setState({
+            formula: (this.state.formula += event.target.value),
+            output: this.state.formula,
+            calculated: false,
+          });
+        }
       }
-    } else if (!this.state.formula.includes(".")) {
-      this.setState({
-        formula: (this.state.formula += event.target.value),
-        output: this.state.formula,
-      });
     }
   };
   handleOperator = (event) => {
-    if (event.target.value !== "-") {
-      if (/[-+*/]$/.test(this.state.formula)) {
+    if (/[-+*/]$/.test(this.state.formula)) {
+      if (event.target.value === "-") {
         this.setState({
-          formula:
-            this.state.formula.match(/\d(?=[-+*/])/)[0] + event.target.value,
+          formula: (this.state.formula += event.target.value),
+          output: this.state.formula,
+          calculated: false,
         });
       } else {
         this.setState({
-          formula: (this.state.output += event.target.value),
+          formula: (this.state.formula.match(/.(?=[-+*/])+/)[0] +=
+            event.target.value),
+          output: this.state.formula,
+          calculated: false,
         });
       }
     } else {
-      if (/[+*/]$/.test(this.state.formula)) {
-        this.setState({
-          formula: this.state.formula + event.target.value,
-        });
-      } else if (/-$/.test(this.state.formula)) {
-        this.setState({
-          formula: this.state.formula.slice(0, -1) + event.target.value,
-        });
-      } else {
-        this.setState({
-          formula: this.state.formula + event.target.value,
-        });
-      }
+      this.setState({
+        formula: (this.state.formula += event.target.value),
+        output: this.state.formula,
+        calculated: false,
+      });
     }
   };
   handleEqual = (event) => {
     this.setState({
-      formula: this.state.formula + "=" + eval(this.state.formula),
-      output: eval(this.state.formula),
+      formula: eval(this.state.formula).toFixed(4),
+      output: eval(this.state.formula).toFixed(4),
+      calculated: true,
     });
   };
   render() {
